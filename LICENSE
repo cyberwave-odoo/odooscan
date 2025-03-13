@@ -1,0 +1,74 @@
+OdooScan Public Source License
+Copyright 2024-2025 OdooScan Team
+
+The OdooScan software ("OdooScan") is dual-licensed. Commercial use requires a paid license, while non-commercial use is permitted under the terms outlined below.
+
+1. Definitions
+1.1 "License" refers to this document.
+1.2 "Contributor" means any individual or legal entity that creates, contributes to, or owns OdooScan.
+1.3 "OdooScan Team" refers to the core developers of OdooScan.
+1.4 "Commercial Use" refers to any use intended for commercial advantage, monetary compensation, or as part of a revenue-generating activity.
+
+2. Commercial Use
+2.1 Commercial Use requires a paid license. Examples include but are not limited to:
+
+Providing OdooScan as part of a managed service or Software-as-a-Service (SaaS) offering.
+
+Distributing OdooScan as a commercial product or as part of a commercial product.
+
+Using OdooScan to enhance or add value to a commercial service or product.
+
+2.2 Non-Commercial Use is permitted without a paid license. Examples include but are not limited to:
+
+Penetration testers or organizations using OdooScan as part of their assessment toolkit.
+
+Inclusion in penetration testing Linux distributions (e.g., Kali Linux, SamuraiWTF, BackBox Linux).
+
+Testing your own systems or using OdooScan for educational purposes.
+
+2.3 If you are unsure whether your use case requires a commercial license, contact the OdooScan Team for clarification.
+
+3. Redistribution
+Redistribution of OdooScan is permitted under the following conditions:
+
+The original, unmodified License is included with OdooScan.
+
+The original, unmodified copyright notices are retained.
+
+Redistribution does not conflict with the Commercial Use clause (Section 2).
+
+4. Copying
+Copying OdooScan is permitted, provided it complies with the Redistribution clause (Section 3).
+
+5. Modification
+Modification of OdooScan is permitted, provided it complies with the Redistribution clause (Section 3).
+
+6. Contributions
+6.1 By contributing to OdooScan, you grant the OdooScan Team an unlimited, non-exclusive, perpetual, and worldwide right to use, modify, and relicense your contributions.
+6.2 Contributions must not violate any third-party rights or licenses.
+
+7. Support
+7.1 OdooScan is provided on an "AS-IS" basis. The OdooScan Team is under no obligation to provide support, updates, or maintenance.
+7.2 Support, updates, or maintenance may be provided at the sole discretion of the OdooScan Team.
+
+8. Disclaimer of Warranty
+OdooScan is provided without warranties of any kind, either express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement. The OdooScan Team does not guarantee that OdooScan is free of defects or suitable for any specific use case.
+
+9. Limitation of Liability
+To the maximum extent permitted by law, the OdooScan Team shall not be liable for any damages, costs, expenses, or losses arising from the use, misuse, or inability to use OdooScan, including but not limited to:
+
+Direct, indirect, incidental, or consequential damages.
+
+Loss of data, revenue, or business opportunities.
+
+Any interaction between OdooScan and third-party software, hardware, or services.
+
+10. Legal Compliance
+10.1 Running OdooScan against systems or websites without prior mutual consent may violate local laws.
+10.2 The OdooScan Team is not responsible for any misuse of OdooScan or damages caused by its use.
+
+11. Trademark
+11.1 The term "OdooScan" and the OdooScan logo are registered trademarks.
+11.2 This License does not grant any rights to use the "OdooScan" trademark or logo without explicit permission from the OdooScan Team.
+
+
