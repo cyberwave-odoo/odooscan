@@ -7,8 +7,8 @@ This project is a python 3 tool designed to scan Odoo instances for vulnerabilit
 - Retrieve the list of databases available on the server.
 - Check if the database manager is open or disabled.
 - Authenticate with Odoo using a username and password.
-- Enumerate installed apps/modules.
-- **Test for demo data login activated using a predefined set of usernames and passwords.**
+- Enumerate installed apps.
+- Test for demo data login activated using a predefined set of usernames and passwords.
 
 ## Installation
 1. Clone the repository:

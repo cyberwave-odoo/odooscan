@@ -81,3 +81,18 @@ class OdooCommand:
         else:
             click.echo("No user, password, or dbname set")
         return odoo
+
+    def copy(self):
+        """
+        Create a copy of the current OdooCommand instance.
+        """
+        return OdooCommand(
+            url=f"{self.protocol}://{self.host}",
+            port=self.port,
+            check_db_manager=self.check_db_manager,
+            user=self.user,
+            password=self.password,
+            dbname=self.dbname,
+            list_modules=self.list_modules,
+            test_demo_login=self.test_demo_login
+        )

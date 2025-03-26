@@ -13,15 +13,16 @@ def test_demo(command, info):
 
     for user in credentials:
         try:
-            odoo_command = OdooCommand(
-                url=f"{command.protocol}://{command.host}",
-                port=command.port,
-                user=user["username"],
-                password=user["password"],
-                dbname=command.dbname  # Assuming no specific database is required for demo login
-            )
+            odoo_command = command.copy()
+            odoo_command.user = user["username"]
+            odoo_command.password = user["password"]
             odoo = odoo_command.connect_to_odoo()
             odoo_command.login_to_odoo(odoo)
-            click.echo(click.style(f"Demo login successful: {user['username']} / {user['password']}", fg="green"))
+            
+            # Check if the login was successful by verifying the uid attribute
+            if odoo.env.uid:
+                click.echo(click.style(f"Demo login successful: {user['username']} / {user['password']}", fg="green"))
+            else:
+                click.echo(f"Failed login attempt: {user['username']} / {user['password']}")
         except Exception as e:
             click.echo(f"Error testing demo login for {user['username']}: {e}")
