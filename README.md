@@ -7,6 +7,7 @@ This project is a python 3 tool designed to scan Odoo instances for vulnerabilit
 - Retrieve the list of databases available on the server.
 - Check if the database manager is open or disabled.
 - Authenticate with Odoo using a username and password.
+- Enumerate installed apps/modules.
 
 ## Installation
 1. Clone the repository:
@@ -34,11 +35,12 @@ python odooscan.py --url http://localhost -p 8069 --check-db-manager -u admin -w
 - `-dbm`, `--check-db-manager`: Check if the database manager is open.
 - `-u`, `--user`: The username for authentication.
 - `-w`, `--password`: The password for authentication.
+- `-lm`, `--list-modules`: Enumerate installed apps/modules.
 
 ## Example
-To discover the version of an Odoo instance and check the database manager:
+To discover the version of an Odoo instance, check the database manager, and list installed modules:
 ```bash
-python odooscan.py --url http://example.com -p 8069 --check-db-manager
+python odooscan.py --url http://example.com -p 8069 --check-db-manager --list-modules
 ```
 
 ## Contributing

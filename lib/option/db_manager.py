@@ -32,3 +32,4 @@ def handle_db_manager_check(command, version):
     db_manager_url_template = db_manager_urls.get(version, db_manager_urls.get("default"))
     db_manager_url = db_manager_url_template.format(protocol=command.protocol, host=command.host, port=command.port)
     check_database_manager(db_manager_url)
+
