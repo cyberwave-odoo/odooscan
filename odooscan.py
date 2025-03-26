@@ -1,23 +1,45 @@
 import click
-from lib.core.logic import discover_version_logic
+from lib.core.state import ScanState
+from lib.core.odoo_command import OdooCommand
+from lib.option.db_manager import handle_db_manager_check
 
-# Define the CLI command for discovering the Odoo version
+
 @click.command()
 @click.option('--url', default='http://localhost', required=True, help='The full URL of the Odoo server (e.g., http://localhost).')
-@click.option('--port', default=8069, help='The Odoo server port (default: 8069).')
-@click.option('--check-db-manager', is_flag=True, help='Check if the database manager is open.')
-def discover_version(url, port, check_db_manager):
+@click.option('-p', '--port', default=8069, help='The Odoo server port (default: 8069).')
+@click.option('-dbm', '--check-db-manager', is_flag=True, help='Check if the database manager is open.')
+@click.option('-u', '--user', default=None, help='The username for authentication.')
+@click.option('-w', '--password', default=None, help='The password for authentication.')
+def discover_version(url, port, check_db_manager, user, password):
     """
     Discover the version of the Odoo instance and optionally check the database manager.
-
-    Args:
-        url (str): The URL of the Odoo server.
-        port (int): The port of the Odoo server.
-        check_db_manager (bool): Flag to check if the database manager is open.
     """
-    # Call the logic function to perform the discovery
-    discover_version_logic(url, port, check_db_manager)
+    command = OdooCommand(url, port, check_db_manager, user=user, password=password)
+    scan = ScanState(command)
+    
+    info = scan.discover_db_version()
+    
+    # Check the database manager if the option is enabled
+    if command.check_db_manager:
+        handle_db_manager_check(command, info.version)
+        
+    
 
-# Entry point for the CLI tool
+    # Handle multiple databases
+    if hasattr(info, 'db_list') and len(info.db_list) > 1:
+        click.echo("Multiple databases detected:")
+        for i, db in enumerate(info.db_list, start=1):
+            click.echo(f"{i}. {db}")
+        db_index = click.prompt("Select the database by number (default: 1)", type=int, default=1)
+        selected_db = info.db_list[db_index - 1]
+        click.echo(f"Database Selected: {selected_db}")
+        command.set_dbname(selected_db)
+    elif hasattr(info, 'db_list') and len(info.db_list) == 1:
+        command.set_dbname(info.db_list[0])
+
+    if( user is not None and password is not None):
+        command.login_to_odoo(scan.odoo_connection)
+    
+
 if __name__ == '__main__':
     discover_version()
