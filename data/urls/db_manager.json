@@ -1,0 +1,4 @@
+{
+    "16.0": "{protocol}://{host}:{port}/web/database/manager",
+    "default": "{protocol}://{host}:{port}/web/database/manager"
+}
