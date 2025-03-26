@@ -14,7 +14,7 @@ def check_database_manager(db_manager_url):
             if "The database manager has been disabled by the administrator" in response.text:
                 click.echo("Database Manager is disabled by the administrator.")
             else:
-                click.echo("Database Manager is likely open.")
+                click.echo(click.style(f"Database Manager is likely open at {db_manager_url}", fg="green"))
         else:
             click.echo(f"Database Manager is not accessible. HTTP Status: {response.status_code}")
     except requests.RequestException as e:

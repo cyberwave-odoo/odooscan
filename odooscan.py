@@ -3,14 +3,13 @@ from lib.core.state import ScanState
 from lib.core.odoo_command import OdooCommand
 from lib.option.db_manager import handle_db_manager_check
 
-
 @click.command()
 @click.option('--url', default='http://localhost', required=True, help='The full URL of the Odoo server (e.g., http://localhost).')
 @click.option('-p', '--port', default=8069, help='The Odoo server port (default: 8069).')
 @click.option('-dbm', '--check-db-manager', is_flag=True, help='Check if the database manager is open.')
 @click.option('-u', '--user', default=None, help='The username for authentication.')
 @click.option('-w', '--password', default=None, help='The password for authentication.')
-def discover_version(url, port, check_db_manager, user, password):
+def start_scan(url, port, check_db_manager, user, password):
     """
     Discover the version of the Odoo instance and optionally check the database manager.
     """
@@ -22,24 +21,21 @@ def discover_version(url, port, check_db_manager, user, password):
     # Check the database manager if the option is enabled
     if command.check_db_manager:
         handle_db_manager_check(command, info.version)
-        
     
-
     # Handle multiple databases
     if hasattr(info, 'db_list') and len(info.db_list) > 1:
         click.echo("Multiple databases detected:")
         for i, db in enumerate(info.db_list, start=1):
             click.echo(f"{i}. {db}")
-        db_index = click.prompt("Select the database by number (default: 1)", type=int, default=1)
+        db_index = click.prompt(click.style("Select the database by number (default: 1)", fg="blue"), type=int, default=1)
         selected_db = info.db_list[db_index - 1]
         click.echo(f"Database Selected: {selected_db}")
         command.set_dbname(selected_db)
     elif hasattr(info, 'db_list') and len(info.db_list) == 1:
         command.set_dbname(info.db_list[0])
 
-    if( user is not None and password is not None):
+    if user is not None and password is not None:
         command.login_to_odoo(scan.odoo_connection)
-    
 
 if __name__ == '__main__':
-    discover_version()
+    start_scan()
