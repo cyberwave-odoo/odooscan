@@ -3,6 +3,7 @@ from lib.core.state import ScanState
 from lib.core.odoo_command import OdooCommand
 from lib.option.db_manager import handle_db_manager_check
 from lib.option.enumerate_modules import enumerate_installed_modules
+from lib.option.test_demo_login import test_demo
 @click.command()
 @click.option('--url', default='http://localhost', required=True, help='The full URL of the Odoo server (e.g., http://localhost).')
 @click.option('-p', '--port', default=8069, help='The Odoo server port (default: 8069).')
@@ -10,11 +11,12 @@ from lib.option.enumerate_modules import enumerate_installed_modules
 @click.option('-u', '--user', default=None, help='The username for authentication.')
 @click.option('-w', '--password', default=None, help='The password for authentication.')
 @click.option('-lm', '--list-modules', is_flag=True, help='List installed apps/modules.')
-def start_scan(url, port, check_db_manager, user, password, list_modules):
+@click.option('-tdl', '--test-demo-login', is_flag=True, help='Enumerate demo users default user:pwd.')
+def start_scan(url, port, check_db_manager, user, password, list_modules, test_demo_login):
     """
     Discover the version of the Odoo instance and optionally check the database manager.
     """
-    command = OdooCommand(url, port, check_db_manager, user=user, password=password)
+    command = OdooCommand(url, port, check_db_manager, user=user, password=password, list_modules=list_modules, test_demo_login=test_demo_login)
     scan = ScanState(command)
     
     info = scan.discover_db_version()
@@ -41,6 +43,8 @@ def start_scan(url, port, check_db_manager, user, password, list_modules):
     # Enumerate installed modules if the option is enabled
     if list_modules:
         enumerate_installed_modules(command, info.version)
+    if test_demo_login:
+        test_demo(command, info)
 
 if __name__ == '__main__':
     start_scan()

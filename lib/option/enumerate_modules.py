@@ -1,8 +1,4 @@
-import click
-import requests
-from lib.settings.path import DATA_FOLDER
-import json
-import os
+from lib.option.common_lib import *
 from bs4 import BeautifulSoup  # Add this import
 
 def enumerate_installed_modules(command, version):
@@ -42,3 +38,4 @@ def enumerate_installed_modules(command, version):
     except requests.RequestException as e:
         click.echo(f"Error enumerating installed modules: {e}")
         raise e
+

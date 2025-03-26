@@ -1,0 +1,12 @@
+{
+    "16.0": [
+        { "username": "portal", "password": "portal" },
+        { "username": "demo", "password": "demo" },
+        { "username": "admin", "password": "admin" }
+    ],
+    "default": [
+        { "username": "portal", "password": "portal" },
+        { "username": "demo", "password": "demo" },
+        { "username": "admin", "password": "admin" }
+    ]
+}

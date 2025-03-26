@@ -1,8 +1,4 @@
-import os
-import json
-from lib.settings.path import DATA_FOLDER
-import click
-import requests
+from lib.option.common_lib import *
 
 def check_database_manager(db_manager_url):
     """

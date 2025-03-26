@@ -7,7 +7,7 @@ class OdooCommand:
     Represents a command to interact with an Odoo instance.
     """
     
-    def __init__(self, url, port, check_db_manager, user=None, password=None, dbname=None):
+    def __init__(self, url, port, check_db_manager=False, user=None, password=None, dbname=None,list_modules=False, test_demo_login=False):
         parsed_url = urlparse(url)
         self.protocol = parsed_url.scheme
         self.host = parsed_url.hostname
@@ -18,6 +18,8 @@ class OdooCommand:
         self.user = user
         self.password = password
         self.dbname = dbname
+        self.test_demo_login = test_demo_login
+        self.list_modules = list_modules
 
     # Getter and Setter for protocol
     def get_protocol(self):
@@ -76,4 +78,6 @@ class OdooCommand:
         if self.user and self.password and self.dbname:
             click.echo(f"Logging in as {self.user} to {self.dbname}")
             odoo.login(self.dbname, self.user, self.password)
+        else:
+            click.echo("No user, password, or dbname set")
         return odoo
