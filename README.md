@@ -1,6 +1,10 @@
 # Odoo Vulnerability Scanner
 
-This project is a python 3 tool designed to scan Odoo instances for vulnerabilities, retrieve version information, and check the status of the database manager.
+![Python](https://img.shields.io/badge/python-3.x-blue)
+![License](https://img.shields.io/badge/license-AGPL%20v3-blue)
+![Contributions](https://img.shields.io/badge/contributions-welcome-brightgreen)
+
+This project is a Python 3 tool designed to scan Odoo instances for vulnerabilities, retrieve version information, and check the status of the database manager.
 
 ## Features
 - Discover the version of an Odoo instance.
