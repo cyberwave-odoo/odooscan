@@ -1,6 +1,8 @@
 import odoorpc
 from urllib.parse import urlparse
 import click
+from lib.logging.logger import Logger
+logger = Logger()
 
 class OdooCommand:
     """
@@ -76,10 +78,10 @@ class OdooCommand:
     
     def login_to_odoo(self, odoo):
         if self.user and self.password and self.dbname:
-            click.echo(f"Logging in as {self.user} to {self.dbname}")
+            logger.verbose(f"Logging in as {self.user} to {self.dbname}")
             odoo.login(self.dbname, self.user, self.password)
         else:
-            click.echo("No user, password, or dbname set")
+            logger.log(f"No user, password, or dbname set for loggin attempt with user {self.user}")
         return odoo
 
     def copy(self):

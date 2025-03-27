@@ -5,15 +5,14 @@ def check_database_manager(db_manager_url):
     Check if the database manager is open or disabled.
     """
     try:
-        click.echo(click.style(f"Checking database manager at {db_manager_url}...", fg="blue"))
         response = requests.get(db_manager_url)
         if response.status_code == 200:
             if "The database manager has been disabled by the administrator" in response.text:
-                click.echo("Database Manager is disabled by the administrator.")
+                logger.log("Database Manager is disabled by the administrator.")
             else:
-                click.echo(click.style(f"Database Manager is likely open at {db_manager_url}", fg="green"))
+                logger.log(click.style(f"Database Manager is likely open at {db_manager_url}", fg="green"))
         else:
-            click.echo(click.style(f"Database Manager is not accessible. HTTP Status: {response.status_code}", fg="red"))
+            logger.log(click.style(f"Database Manager is not accessible. HTTP Status: {response.status_code}", fg="red"))
     except requests.RequestException as e:
         click.echo(click.style(f"Error checking Database Manager: {e}", fg="red"))
         raise e
@@ -28,5 +27,6 @@ def handle_db_manager_check(command, version):
 
     db_manager_url_template = db_manager_urls.get(version, db_manager_urls.get("default"))
     db_manager_url = db_manager_url_template.format(protocol=command.protocol, host=command.host, port=command.port)
+    logger.verbose(click.style(f"Checking database manager at {db_manager_url}...", fg="blue"))
     check_database_manager(db_manager_url)
 

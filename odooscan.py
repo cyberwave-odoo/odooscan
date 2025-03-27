@@ -4,6 +4,7 @@ from lib.core.odoo_command import OdooCommand
 from lib.option.db_manager import handle_db_manager_check
 from lib.option.enumerate_modules import enumerate_installed_modules
 from lib.option.test_demo_login import test_demo
+from lib.logging.logger import Logger
 
 
 @click.command()
@@ -14,10 +15,12 @@ from lib.option.test_demo_login import test_demo
 @click.option('-w', '--password', help='The password for authentication.')
 @click.option('-lm', '--list-modules', is_flag=True, help='List installed apps/modules.')
 @click.option('-tdl', '--test-demo-login', is_flag=True, help='Enumerate demo users default user:pwd.')
-def start_scan(url, port, check_db_manager, user, password, list_modules, test_demo_login):
+@click.option('-v', '--verbose', is_flag=True, help='Enable verbose output.')
+def start_scan(url, port, check_db_manager, user, password, list_modules, test_demo_login, verbose):
 
+    logger = Logger(verbose)
 
-    click.echo(click.style(f"Starting scan on {url}:{port}...", fg="blue"))
+    logger.log(click.style(f"Starting scan on {url}:{port}...", fg="blue"))
     command = OdooCommand(url, port, check_db_manager, user=user, password=password, list_modules=list_modules, test_demo_login=test_demo_login)
     scan = ScanState(command)
     
@@ -25,17 +28,16 @@ def start_scan(url, port, check_db_manager, user, password, list_modules, test_d
     
     # Check the database manager if the option is enabled
     if command.check_db_manager:
-        click.echo(click.style("Checking database manager...", fg="blue"))
         handle_db_manager_check(command, info.version)
     
     # Handle multiple databases
     if hasattr(info, 'db_list') and len(info.db_list) > 1:
-        click.echo("Multiple databases detected:")
+        logger.log("Multiple databases detected:")
         for i, db in enumerate(info.db_list, start=1):
-            click.echo(f"{i}. {db}")
+            logger.log(f"{i}. {db}")
         db_index = click.prompt(click.style("Select the database by number (default: 1)", fg="blue"), type=int, default=1)
         selected_db = info.db_list[db_index - 1]
-        click.echo(f"Database Selected: {selected_db}")
+        logger.log(f"Database Selected: {selected_db}")
         command.set_dbname(selected_db)
     elif hasattr(info, 'db_list') and len(info.db_list) == 1:
         command.set_dbname(info.db_list[0])
@@ -45,14 +47,11 @@ def start_scan(url, port, check_db_manager, user, password, list_modules, test_d
 
     # Enumerate installed modules if the option is enabled
     if list_modules:
-        click.echo(click.style("Enumerating installed modules...", fg="blue"))
         enumerate_installed_modules(command, info.version)
     if test_demo_login:
-        click.echo(click.style("Testing demo logins...", fg="blue"))
         test_demo(command, info)
 
-
-    click.echo("Scan completed.")
+    logger.log("Scan completed.")
 
 if __name__ == '__main__':
     start_scan()
