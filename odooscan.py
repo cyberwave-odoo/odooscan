@@ -7,7 +7,7 @@ from lib.option.test_demo_login import test_demo
 from lib.logging.logger import Logger
 
 
-@click.command()
+@click.command(context_settings={"help_option_names": ["-h", "--help"]})
 @click.argument('url')
 @click.option('-p', '--port', default=8069, help='The Odoo server port (default: 8069).', show_default=True)
 @click.option('-dbm', '--check-db-manager', is_flag=True, help='Check if the database manager is open.')
