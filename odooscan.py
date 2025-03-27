@@ -4,18 +4,20 @@ from lib.core.odoo_command import OdooCommand
 from lib.option.db_manager import handle_db_manager_check
 from lib.option.enumerate_modules import enumerate_installed_modules
 from lib.option.test_demo_login import test_demo
+
+
 @click.command()
-@click.option('--url', default='http://localhost', required=True, help='The full URL of the Odoo server (e.g., http://localhost).')
-@click.option('-p', '--port', default=8069, help='The Odoo server port (default: 8069).')
+@click.argument('url')
+@click.option('-p', '--port', default=8069, help='The Odoo server port (default: 8069).', show_default=True)
 @click.option('-dbm', '--check-db-manager', is_flag=True, help='Check if the database manager is open.')
-@click.option('-u', '--user', default=None, help='The username for authentication.')
-@click.option('-w', '--password', default=None, help='The password for authentication.')
+@click.option('-u', '--user', help='The username for authentication.')
+@click.option('-w', '--password', help='The password for authentication.')
 @click.option('-lm', '--list-modules', is_flag=True, help='List installed apps/modules.')
 @click.option('-tdl', '--test-demo-login', is_flag=True, help='Enumerate demo users default user:pwd.')
 def start_scan(url, port, check_db_manager, user, password, list_modules, test_demo_login):
-    """
-    Discover the version of the Odoo instance and optionally check the database manager.
-    """
+
+
+    click.echo(click.style(f"Starting scan on {url}:{port}...", fg="blue"))
     command = OdooCommand(url, port, check_db_manager, user=user, password=password, list_modules=list_modules, test_demo_login=test_demo_login)
     scan = ScanState(command)
     
@@ -23,6 +25,7 @@ def start_scan(url, port, check_db_manager, user, password, list_modules, test_d
     
     # Check the database manager if the option is enabled
     if command.check_db_manager:
+        click.echo(click.style("Checking database manager...", fg="blue"))
         handle_db_manager_check(command, info.version)
     
     # Handle multiple databases
@@ -42,9 +45,14 @@ def start_scan(url, port, check_db_manager, user, password, list_modules, test_d
 
     # Enumerate installed modules if the option is enabled
     if list_modules:
+        click.echo(click.style("Enumerating installed modules...", fg="blue"))
         enumerate_installed_modules(command, info.version)
     if test_demo_login:
+        click.echo(click.style("Testing demo logins...", fg="blue"))
         test_demo(command, info)
+
+
+    click.echo("Scan completed.")
 
 if __name__ == '__main__':
     start_scan()

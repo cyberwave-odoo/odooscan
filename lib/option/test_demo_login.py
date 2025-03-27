@@ -12,6 +12,7 @@ def test_demo(command, info):
     credentials = demo_users.get(info.version, demo_users.get("default"))
 
     for user in credentials:
+        click.echo(click.style(f"Testing demo login for {user['username']}...", fg="blue"))
         try:
             odoo_command = command.copy()
             odoo_command.user = user["username"]
@@ -23,6 +24,6 @@ def test_demo(command, info):
             if odoo.env.uid:
                 click.echo(click.style(f"Demo login successful: {user['username']} / {user['password']}", fg="green"))
             else:
-                click.echo(f"Failed login attempt: {user['username']} / {user['password']}")
+                click.echo(click.style(f"Failed login attempt: {user['username']} / {user['password']}", fg="red"))
         except Exception as e:
-            click.echo(f"Error testing demo login for {user['username']}: {e}")
+            click.echo(click.style(f"Error testing demo login for {user['username']}: {e}", fg="red"))

@@ -13,8 +13,10 @@ def enumerate_installed_modules(command, version):
     modules_url = modules_url_template.format(protocol=command.protocol, host=command.host, port=command.port)
 
     try:
+        click.echo(click.style(f"Fetching modules from {modules_url}...", fg="blue"))
         response = requests.get(modules_url)
         if response.status_code == 200:
+            click.echo(click.style("Parsing module data...", fg="blue"))
             # Parse HTML response
             soup = BeautifulSoup(response.text, 'html.parser')
             # Extract module names and explanations from <dl> tags
@@ -27,15 +29,15 @@ def enumerate_installed_modules(command, version):
                 if dl.find('a')
             ]
             if modules:
-                click.echo("Installed Modules (from HTML):")
+                click.echo(click.style("Installed Modules (from HTML):", fg="green"))
                 for module in modules:
                     click.echo(f"- {module['name']}: {module['description']}")
             else:
-                click.echo("No modules found or insufficient permissions in HTML response.")
+                click.echo(click.style("No modules found or insufficient permissions in HTML response.", fg="yellow"))
             
         else:
-            click.echo(f"Failed to fetch modules. HTTP Status: {response.status_code}")
+            click.echo(click.style(f"Failed to fetch modules. HTTP Status: {response.status_code}", fg="red"))
     except requests.RequestException as e:
-        click.echo(f"Error enumerating installed modules: {e}")
+        click.echo(click.style(f"Error enumerating installed modules: {e}", fg="red"))
         raise e
 

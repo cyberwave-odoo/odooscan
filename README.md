@@ -7,7 +7,7 @@ This project is a python 3 tool designed to scan Odoo instances for vulnerabilit
 - Retrieve the list of databases available on the server.
 - Check if the database manager is open or disabled.
 - Authenticate with Odoo using a username and password.
-- Enumerate installed apps.
+- Enumerate installed apps/modules.
 - Test for demo data login activated using a predefined set of usernames and passwords.
 
 ## Installation
@@ -25,13 +25,12 @@ This project is a python 3 tool designed to scan Odoo instances for vulnerabilit
    ```
 
 ## Usage
-Run the `odooscan.py` script with the desired options:
+Run the `odooscan.py` script with the mandatory URL argument and optional parameters:
 ```bash
-python odooscan.py --url http://localhost -p 8069 --check-db-manager -u admin -w admin_password
+python odooscan.py http://example.com [options]
 ```
 
 ### Options
-- `--url`: The full URL of the Odoo server (default: `http://localhost`).
 - `-p`, `--port`: The port of the Odoo server (default: `8069`).
 - `-dbm`, `--check-db-manager`: Check if the database manager is open.
 - `-u`, `--user`: The username for authentication.
@@ -39,15 +38,15 @@ python odooscan.py --url http://localhost -p 8069 --check-db-manager -u admin -w
 - `-lm`, `--list-modules`: Enumerate installed apps/modules.
 - `-tdl`, `--test-demo-login`: Test if demo data login is activated using predefined credentials.
 
-## Example
+## Examples
 To discover the version of an Odoo instance, check the database manager, and list installed modules:
 ```bash
-python odooscan.py --url http://example.com -p 8069 --check-db-manager --list-modules
+python odooscan.py http://example.com --check-db-manager --list-modules
 ```
 
 To test for demo data login:
 ```bash
-python odooscan.py --url http://example.com -p 8069 --test-demo-login
+python odooscan.py http://example.com --test-demo-login
 ```
 
 ## Contributing
