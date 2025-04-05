@@ -2,7 +2,7 @@ from lib.option.common_lib import *
 from bs4 import BeautifulSoup  # Add this import
 
 
-def enumerate_installed_modules(command, version):
+def enumerate_installed_modules(state):
     """
     Enumerate installed apps/modules from the Odoo instance.
     """
@@ -10,8 +10,8 @@ def enumerate_installed_modules(command, version):
     with open(versions_file, 'r') as f:
         modules_urls = json.load(f)
 
-    modules_url_template = modules_urls.get(version, modules_urls.get("default"))
-    modules_url = modules_url_template.format(protocol=command.protocol, host=command.host, port=command.port)
+    modules_url_template = modules_urls.get(state.version, modules_urls.get("default"))
+    modules_url = modules_url_template.format(protocol=state._cli.protocol, host=state._cli.host, port=state._cli.port)
 
     try:
         logger.verbose(click.style(f"Fetching modules from {modules_url}", fg="blue"))

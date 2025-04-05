@@ -1,47 +1,39 @@
 import click
 from lib.core.state import ScanState
-from lib.core.odoo_command import OdooCommand
+from lib.core.odoo_command import CliCommand, OdooCommand
 from lib.option.db_manager import handle_db_manager_check
 from lib.option.enumerate_modules import enumerate_installed_modules
 from lib.option.test_demo_login import test_demo
 from lib.logging.logger import Logger
 from lib.option.fetch_users import fetch_users_and_roles
+from lib.core.state import get_scan_state
+# Define a global variable for the CliCommand instance
 
-# Singleton instance for the OdooCommand
-command = None
-
+state = get_scan_state()
+cli_command = None
+logger = None
 def setup_logger(verbose):
     """Initialize and return logger."""
     return Logger(verbose)
 
-def initialize_command_singleton(url, port, check_db_manager, user, password, list_modules, test_demo_login):
+def initialize_command_singleton(**kwargs):
     """Initialize or return the singleton OdooCommand object."""
-    global command
-    if command is None:
-        command = OdooCommand(
-            url, 
-            port, 
-            check_db_manager, 
-            user=user, 
-            password=password,
-            list_modules=list_modules, 
-            test_demo_login=test_demo_login
-        )
-    return command
+    cli = CliCommand(**kwargs)
+    return cli
 
-def perform_scan(command, logger):
+def perform_scan(state):
     """Perform the scanning operation and return scan info."""
-    scan = ScanState(command)
-    info = scan.discover_db_version()
-    return scan, info
+    state = state.discover_db_version()
+    return state
 
-def check_db_manager_if_enabled(command, info_version, logger):
+def check_db_manager_if_enabled(info_version):
     """Check the database manager if the option is enabled."""
-    if command.check_db_manager:
+    if cli_command.check_db_manager:
         logger.log("Checking database manager...")
-        handle_db_manager_check(command, info_version)
+        handle_db_manager_check(info_version)
 
-def select_database(info, command, logger):
+def select_database():
+    info = state
     """Handle database selection."""
     if hasattr(info, 'db_list'):
         if len(info.db_list) > 1:
@@ -51,35 +43,34 @@ def select_database(info, command, logger):
             db_index = click.prompt(click.style("Select the database by number (default: 1)", fg="blue"), type=int, default=1)
             selected_db = info.db_list[db_index - 1]
             logger.log(f"Database Selected: {selected_db}")
-            command.set_dbname(selected_db)
+            cli_command.set_dbname(selected_db)
         elif len(info.db_list) == 1:
             selected_db = info.db_list[0]
             logger.log(f"Using database: {selected_db}")
-            command.set_dbname(selected_db)
+            cli_command.set_dbname(selected_db)
 
-def login_if_credentials_provided(command, scan, user, password, logger):
+def login_if_credentials_provided():
     """Login to Odoo if credentials are provided."""
-    if user is not None and password is not None:
+    if state.odooCommand.user is not None and state.odooCommand.password is not None:
         logger.log("Attempting to login with provided credentials...")
-        command.login_to_odoo(scan.odoo_connection)
+        state.odooCommand.login_to_odoo(state.session)
 
-def handle_operations(command, info, list_modules, test_demo_login, fetch_users, user, password, logger):
+def handle_operations(state, list_modules, test_demo_login, fetch_users):
     """Handle Odoo operations based on provided options."""
     if list_modules:
         logger.log("Enumerating installed modules...")
-        enumerate_installed_modules(command, info.version)
+        enumerate_installed_modules(state)
     
     if test_demo_login:
         logger.log("Testing demo login credentials...")
-        test_demo(command, info)
+        test_demo(state)
     
     if fetch_users:
-        if not user or not password:
+        if not state._cli.user or not state._cli.password:
             logger.log(click.style("Error: Admin username and password are required for fetching users.", fg="red"))
             return False
         logger.log("Fetching users and roles...")
-        fetch_users_and_roles(command)
-    
+        fetch_users_and_roles(state)
     return True
 
 def validate_fetch_users(ctx, param, value):
@@ -99,28 +90,31 @@ def validate_fetch_users(ctx, param, value):
 @click.option('-tdl', '--test-demo-login', is_flag=True, help='Enumerate demo users default user:pwd.')
 @click.option('-fu', '--fetch-users', is_flag=True, callback=validate_fetch_users, expose_value=True, help='Fetch all users and their roles (requires admin credentials).')
 @click.option('-v', '--verbose', is_flag=True, help='Enable verbose output.')
-def start_scan(url, port, check_db_manager, user, password, list_modules, test_demo_login, fetch_users, verbose):
+def start_scan(**kwargs):
     """Start an Odoo server scan with the specified options."""
+    global cli_command  # Declare the global variable
+    global logger  # Declare the global variable
+    global state  # Declare the global variable
     # Setup
-    logger = setup_logger(verbose)
-    logger.log(click.style(f"Starting scan on {url}:{port}...", fg="blue"))
+    logger = setup_logger(kwargs.get('verbose'))
+    logger.log(click.style(f"Starting scan on {kwargs.get('url')}:{kwargs.get('port')}...", fg="blue"))
     
-    # Initialize command singleton and perform scan
-    global command
-    command = initialize_command_singleton(url, port, check_db_manager, user, password, list_modules, test_demo_login)
-    scan, info = perform_scan(command, logger)
+    # Initialize command singleton and assign to the global variable
+    cli_command = initialize_command_singleton(**kwargs)
+    state.cli = cli_command
+    state = perform_scan(state)
     
     # Check database manager
-    check_db_manager_if_enabled(command, info.version, logger)
+    check_db_manager_if_enabled(state.version)
     
     # Handle database selection
-    select_database(info, command, logger)
+    select_database()
     
     # Login if credentials provided
-    login_if_credentials_provided(command, scan, command.user, command.password, logger)
+    login_if_credentials_provided()
     
     # Handle operations
-    if handle_operations(command, info, list_modules, test_demo_login, fetch_users, command.user, command.password, logger):
+    if handle_operations(state, kwargs.get('list_modules'), kwargs.get('test_demo_login'), kwargs.get('fetch_users')):
         logger.log(click.style("Scan completed successfully.", fg="green"))
     else:
         logger.log(click.style("Scan completed with errors.", fg="yellow"))

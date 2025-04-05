@@ -1,8 +1,8 @@
 from lib.option.common_lib import *
-from lib.core.odoo_command import OdooCommand
+from lib.core.odoo_command import CliCommand, OdooCommand
 
 
-def test_demo(command, info):
+def test_demo(state):
     """
     Test if demo data login is activated using predefined credentials.
     """
@@ -12,11 +12,11 @@ def test_demo(command, info):
     with open(demo_users_file, 'r') as f:
         demo_users = json.load(f)
 
-    credentials = demo_users.get(info.version, demo_users.get("default"))
+    credentials = demo_users.get(state.version, demo_users.get("default"))
 
     for user in credentials:
         try:
-            odoo_command = command.copy()
+            odoo_command = state.odooCommand
             odoo_command.user = user["username"]
             odoo_command.password = user["password"]
             odoo = odoo_command.connect_to_odoo()

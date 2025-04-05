@@ -1,5 +1,6 @@
 from lib.option.common_lib import *
 
+
 def check_database_manager(db_manager_url):
     """
     Check if the database manager is open or disabled.
@@ -18,7 +19,7 @@ def check_database_manager(db_manager_url):
         click.echo(click.style(f"Error checking Database Manager: {e}", fg="red"))
         raise e
 
-def handle_db_manager_check(command, version):
+def handle_db_manager_check(version):
     """
     Handle the logic for checking the database manager.
     """
@@ -27,7 +28,7 @@ def handle_db_manager_check(command, version):
         db_manager_urls = json.load(f)
 
     db_manager_url_template = db_manager_urls.get(version, db_manager_urls.get("default"))
-    db_manager_url = db_manager_url_template.format(protocol=command.protocol, host=command.host, port=command.port)
+    db_manager_url = db_manager_url_template.format(protocol=state._cli.protocol, host=state._cli.host, port=state._cli.port)
     logger.verbose(click.style(f"Checking database manager at {db_manager_url}...", fg="blue"))
     check_database_manager(db_manager_url)
 

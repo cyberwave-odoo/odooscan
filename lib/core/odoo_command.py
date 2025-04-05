@@ -1,27 +1,36 @@
 import odoorpc
 from urllib.parse import urlparse
-import click
 from lib.logging.logger import Logger
 logger = Logger()
 
-class OdooCommand:
+class CliCommand:
     """
     Represents a command to interact with an Odoo instance.
     """
-    
-    def __init__(self, url, port, check_db_manager=False, user=None, password=None, dbname=None,list_modules=False, test_demo_login=False):
-        parsed_url = urlparse(url)
-        self.protocol = parsed_url.scheme
-        self.host = parsed_url.hostname
-        self.port = port
-        self.protocol_map = {"https": 'jsonrpc+ssl', "http" : "jsonrpc"}
-        
-        self.check_db_manager = check_db_manager
-        self.user = user
-        self.password = password
-        self.dbname = dbname
-        self.test_demo_login = test_demo_login
-        self.list_modules = list_modules
+    _instance = None  # Class-level attribute to hold the singleton instance
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(CliCommand, cls).__new__(cls)
+        return cls._instance
+
+    def __init__(self, **kwargs):
+        if not hasattr(self, '_initialized'):  # Ensure __init__ runs only once
+            self.url = kwargs.get('url')
+            parsed_url = urlparse(self.url)
+            self.protocol = parsed_url.scheme
+            self.host = parsed_url.hostname
+            self.port = kwargs.get('port')
+            self.protocol_map = {"https": 'jsonrpc+ssl', "http": "jsonrpc"}
+            
+            self.check_db_manager = kwargs.get('check_db_manager', False)
+            self.user = kwargs.get('user')
+            self.password = kwargs.get('password')
+            self.dbname = kwargs.get('dbname')
+            self.test_demo_login = kwargs.get('test_demo_login', False)
+            self.list_modules = kwargs.get('list_modules', False)
+            self.fetch_users = kwargs.get('fetch_users', False)
+            self._initialized = True  # Mark as initialized
 
     # Getter and Setter for protocol
     def get_protocol(self):
@@ -72,29 +81,35 @@ class OdooCommand:
     def set_dbname(self, dbname):
         self.dbname = dbname
 
+
+class OdooCommand():
+    """
+    Extends CliCommand to provide specific functionality for interacting with Odoo.
+    """
+    def __init__(self, cli_command=None, **kwargs):
+        if cli_command:
+            self.cli = cli_command
+            self.user = cli_command.get_user()
+            self.password = cli_command.get_password()
+        
+
     def connect_to_odoo(self):
-        odoo = odoorpc.ODOO(self.host, protocol=self.protocol_map[self.protocol], port=self.port)
+        print(f"Connecting to Odoo at {self.cli.protocol}://{self.cli.host}:{self.cli.port}")
+        odoo = odoorpc.ODOO(self.cli.host, protocol=self.cli.protocol_map[self.cli.protocol], port=self.cli.port)
         return odoo
     
     def login_to_odoo(self, odoo):
-        if self.user and self.password and self.dbname:
-            logger.verbose(f"Logging in as {self.user} to {self.dbname}")
-            odoo.login(self.dbname, self.user, self.password)
+        if self.user and self.password and self.cli.dbname:
+            logger.verbose(f"Logging in as {self.user} to {self.cli.dbname}")
+            odoo.login(self.cli.dbname, self.user, self.password)
         else:
-            logger.log(f"No user, password, or dbname set for loggin attempt with user {self.user}")
+            logger.log(f"No user, password, or dbname set for login attempt with user {self.user}")
         return odoo
 
     def copy(self):
         """
         Create a copy of the current OdooCommand instance.
         """
-        return OdooCommand(
-            url=f"{self.protocol}://{self.host}",
-            port=self.port,
-            check_db_manager=self.check_db_manager,
-            user=self.user,
-            password=self.password,
-            dbname=self.dbname,
-            list_modules=self.list_modules,
-            test_demo_login=self.test_demo_login
-        )
+        attributes = vars(self).copy()  # Get all instance attributes as a dictionary
+        attributes['url'] = f"{self.cli.protocol}://{self.cli.host}"  # Reconstruct the URL
+        return OdooCommand(**attributes)

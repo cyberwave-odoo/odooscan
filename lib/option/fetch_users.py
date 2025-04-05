@@ -1,13 +1,16 @@
 from lib.option.common_lib import *
+from lib.core.odoo_command import CliCommand, OdooCommand
 import polars as pl
 
-def fetch_users_and_roles(command):
+
+def fetch_users_and_roles(state):
     """
     Fetch all users and their roles from the Odoo instance.
     """
     try:
-        odoo = command.connect_to_odoo()
-        command.login_to_odoo(odoo)  # Login using admin credentials
+        odoo_command = state.odooCommand
+        odoo = odoo_command.connect_to_odoo()
+        odoo = odoo_command.login_to_odoo(odoo)  # Login using admin credentials
 
         logger.verbose("Fetching users and their roles...")
         users = odoo.env['res.users'].search_read([], ['id', 'name', 'login', 'groups_id'])
