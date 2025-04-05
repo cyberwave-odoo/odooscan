@@ -1,12 +1,12 @@
 import click
-from lib.core.state import ScanState
-from lib.core.odoo_command import CliCommand, OdooCommand
+from lib.base.state import ScanState
+from lib.base.odoo_command import CliCommand, OdooCommand
 from lib.option.db_manager import handle_db_manager_check
 from lib.option.enumerate_modules import enumerate_installed_modules
 from lib.option.test_demo_login import test_demo
 from lib.logging.logger import Logger
 from lib.option.fetch_users import fetch_users_and_roles
-from lib.core.state import get_scan_state
+from lib.base.state import get_scan_state
 # Define a global variable for the CliCommand instance
 
 state = get_scan_state()
@@ -59,18 +59,18 @@ def handle_operations(state, list_modules, test_demo_login, fetch_users):
     """Handle Odoo operations based on provided options."""
     if list_modules:
         logger.log("Enumerating installed modules...")
-        enumerate_installed_modules(state)
+        enumerate_installed_modules()
     
     if test_demo_login:
         logger.log("Testing demo login credentials...")
-        test_demo(state)
+        test_demo()
     
     if fetch_users:
         if not state._cli.user or not state._cli.password:
             logger.log(click.style("Error: Admin username and password are required for fetching users.", fg="red"))
             return False
         logger.log("Fetching users and roles...")
-        fetch_users_and_roles(state)
+        fetch_users_and_roles()
     return True
 
 def validate_fetch_users(ctx, param, value):

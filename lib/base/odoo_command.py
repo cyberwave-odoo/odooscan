@@ -94,7 +94,7 @@ class OdooCommand():
         
 
     def connect_to_odoo(self):
-        print(f"Connecting to Odoo at {self.cli.protocol}://{self.cli.host}:{self.cli.port}")
+        logger.verbose(f"Connecting to Odoo at {self.cli.protocol}://{self.cli.host}:{self.cli.port}")
         odoo = odoorpc.ODOO(self.cli.host, protocol=self.cli.protocol_map[self.cli.protocol], port=self.cli.port)
         return odoo
     

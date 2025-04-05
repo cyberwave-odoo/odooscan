@@ -1,9 +1,8 @@
 from lib.option.common_lib import *
-from lib.core.odoo_command import CliCommand, OdooCommand
 import polars as pl
 
 
-def fetch_users_and_roles(state):
+def fetch_users_and_roles():
     """
     Fetch all users and their roles from the Odoo instance.
     """

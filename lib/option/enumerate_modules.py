@@ -2,7 +2,7 @@ from lib.option.common_lib import *
 from bs4 import BeautifulSoup  # Add this import
 
 
-def enumerate_installed_modules(state):
+def enumerate_installed_modules():
     """
     Enumerate installed apps/modules from the Odoo instance.
     """

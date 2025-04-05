@@ -1,8 +1,7 @@
 from lib.option.common_lib import *
-from lib.core.odoo_command import CliCommand, OdooCommand
 
 
-def test_demo(state):
+def test_demo():
     """
     Test if demo data login is activated using predefined credentials.
     """

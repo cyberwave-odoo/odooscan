@@ -1,5 +1,5 @@
 import click
-from lib.core.odoo_command import OdooCommand
+from lib.base.odoo_command import OdooCommand
 
 class ScanState:
     _instance = None  # Singleton instance
