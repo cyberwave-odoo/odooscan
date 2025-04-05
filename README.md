@@ -13,6 +13,7 @@ This project is a Python 3 tool designed to scan Odoo instances for vulnerabilit
 - Authenticate with Odoo using a username and password.
 - Enumerate installed apps/modules.
 - Test for demo data login activated using a predefined set of usernames and passwords.
+- Fetch all users and their roles (requires admin credentials).
 
 ## Installation
 1. Clone the repository:
@@ -41,6 +42,7 @@ python odooscan.py http://example.com [options]
 - `-w`, `--password`: The password for authentication.
 - `-lm`, `--list-modules`: Enumerate installed apps/modules.
 - `-tdl`, `--test-demo-login`: Test if demo data login is activated using predefined credentials.
+- `-fu`, `--fetch-users`: Fetch all users and their roles (requires admin credentials).
 
 ## Examples
 To discover the version of an Odoo instance, check the database manager, and list installed modules:
@@ -53,9 +55,17 @@ To test for demo data login:
 python odooscan.py http://example.com --test-demo-login
 ```
 
+To fetch all users and their roles:
+```bash
+python odooscan.py http://example.com -u admin -w admin --fetch-users
+```
+
 ## Contributing
 Contributions are welcome! Please follow these steps:
 1. Fork the repository.
 2. Create a new branch for your feature or bugfix.
 3. Commit your changes and push the branch.
 4. Open a pull request.
+
+## License
+This project is licensed under the AGPL v3 License. See the [LICENSE](LICENSE) file for details.ils.

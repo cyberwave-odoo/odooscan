@@ -3,6 +3,7 @@ from lib.option.common_lib import *
 def check_database_manager(db_manager_url):
     """
     Check if the database manager is open or disabled.
+    This works because the response.text is not translated in the Odoo interface.
     """
     try:
         response = requests.get(db_manager_url)
